@@ -6,5 +6,7 @@ dependencyResolutionManagement {
         // Warning: this repository is going to shut down soon
     }
 }
+
 rootProject.name = "TZFE"
+
 include(":app")
