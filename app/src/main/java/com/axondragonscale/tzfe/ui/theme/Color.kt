@@ -20,6 +20,22 @@ object Colors {
     val Tile32 = Color(211, 131, 105)
     val Tile64 = Color(214, 113, 85)
 
+    val TileColors = mapOf<Int, Color>(
+        0 to TileEmpty,
+        2 to Tile2,
+        4 to Tile4,
+        8 to Tile8,
+        16 to Tile16,
+        32 to Tile32,
+        64 to Tile64,
+        128 to Tile64,
+        256 to Tile64,
+        512 to Tile64,
+        1024 to Tile64,
+        2048 to Tile64,
+        4096 to Tile64
+    )
+
     // Tile Fonts
     val light = Color.White
     val dark = Color(116, 110, 103)

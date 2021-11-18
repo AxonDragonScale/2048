@@ -1,5 +1,7 @@
 package com.axondragonscale.tzfe.data
 
+import androidx.compose.ui.graphics.Color
+import com.axondragonscale.tzfe.ui.theme.Colors
 import java.lang.RuntimeException
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -7,7 +9,9 @@ import kotlin.random.nextInt
 /**
  * Created by Ronak Harkhani on 05/06/21
  */
-class Tile private constructor(val value: Int) {
+class Tile private constructor(
+    val value: Int
+) {
 
     companion object {
         val empty = Tile(0)
@@ -36,6 +40,12 @@ class Tile private constructor(val value: Int) {
 
     val displayText: String
         get() = if (isEmpty) "" else value.toString()
+
+    val fontColor: Color
+        get() = if (value <= 8) Colors.dark else Colors.light
+
+    val tileColor: Color
+        get() = Colors.TileColors[value] ?: Colors.TileEmpty
 
     operator fun plus(t: Tile): Tile {
         return combine(this, t)

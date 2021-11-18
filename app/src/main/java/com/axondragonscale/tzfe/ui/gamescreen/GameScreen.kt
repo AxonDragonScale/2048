@@ -2,37 +2,58 @@ package com.axondragonscale.tzfe.ui.gamescreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.consumeAllChanges
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.axondragonscale.tzfe.data.Direction
 import com.axondragonscale.tzfe.data.Matrix
+import com.axondragonscale.tzfe.data.Tile
 import com.axondragonscale.tzfe.ui.theme.Colors
 import com.axondragonscale.tzfe.ui.theme.TZFETheme
+import kotlin.math.abs
 
 /**
  * Created by Ronak Harkhani on 05/06/21
  */
 
 @Composable
-fun GameScreen() {
+fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
+    var offsetX by remember { mutableStateOf(0f) }
+    var offsetY by remember { mutableStateOf(0f) }
+
     Surface(
         color = Colors.GameBackground,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                detectDragGestures(
+                    onDragEnd = {
+                        viewModel.push(offsetX, offsetY)
+                        offsetX = 0f
+                        offsetY = 0f
+                    }
+                ) { change, dragAmount ->
+                    change.consumeAllChanges()
+
+                    offsetX += dragAmount.x
+                    offsetY += dragAmount.y
+                }
+            }
     ) {
         Column(
             modifier = Modifier
@@ -88,7 +109,7 @@ fun HeaderView(
                 modifier = Modifier
                     .clip(RoundedCornerShape(4.dp))
                     .background(Colors.BoardBackground)
-                    .clickable { viewModel.pushInDirection(Direction.Down) }
+                    .clickable { viewModel.resetBoard() }
                     .padding(vertical = 8.dp, horizontal = 16.dp)
             ) {
                 Text(
@@ -154,7 +175,7 @@ fun BoardView(
                                 .aspectRatio(1f)
                                 .padding(4.dp)
                         ) {
-                            TileView(board, i, j)
+                            TileView(board.base[i][j])
                         }
                     }
                 }
@@ -165,20 +186,20 @@ fun BoardView(
 
 
 @Composable
-fun TileView(board: Matrix, row: Int, col: Int) {
+fun TileView(tile: Tile) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .clip(RoundedCornerShape(4.dp))
-            .background(Colors.Tile2)
+            .background(tile.tileColor)
             .padding(8.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = board.base[row][col].displayText,
-            fontSize = 48.sp,
+            text = tile.displayText,
+            fontSize = 40.sp,
             fontWeight = FontWeight.Bold,
-            color = Colors.dark
+            color = tile.fontColor
         )
     }
 }
