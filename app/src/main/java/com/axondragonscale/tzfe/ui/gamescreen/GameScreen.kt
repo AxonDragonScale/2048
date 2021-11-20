@@ -105,23 +105,32 @@ fun HeaderView(
                 color = Colors.dark
             )
 
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(Colors.BoardBackground)
-                    .clickable { viewModel.resetBoard() }
-                    .padding(vertical = 8.dp, horizontal = 16.dp)
-            ) {
-                Text(
-                    text = "RESET",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Colors.light
-                )
+            Row {
+                ButtonView(btnText = "UNDO") { viewModel.undoMove() }
+                Spacer(modifier = Modifier.width(4.dp))
+                ButtonView(btnText = "RESET") { viewModel.resetBoard() }
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+fun ButtonView(btnText: String, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(4.dp))
+            .background(Colors.BoardBackground)
+            .clickable { onClick() }
+            .padding(vertical = 8.dp, horizontal = 16.dp)
+    ) {
+        Text(
+            text = btnText,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = Colors.light
+        )
     }
 }
 
