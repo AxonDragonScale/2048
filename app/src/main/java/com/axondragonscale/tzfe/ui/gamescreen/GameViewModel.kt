@@ -1,6 +1,8 @@
 package com.axondragonscale.tzfe.ui.gamescreen
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.axondragonscale.tzfe.data.Direction
 import com.axondragonscale.tzfe.engine.GameEngine
@@ -13,18 +15,20 @@ import kotlin.math.abs
  */
 @HiltViewModel
 class GameViewModel @Inject constructor(): ViewModel() {
-    private val gameEngine = GameEngine()
+    val gameEngine = GameEngine()
 
-    var board = mutableStateOf(gameEngine.board.copy())
+    var board by mutableStateOf(gameEngine.board.copy())
+    var score by mutableStateOf(gameEngine.score)
+    var highScore by mutableStateOf(gameEngine.highScore)
 
     fun resetBoard() {
         gameEngine.resetBoard()
-        updateBoard()
+        update()
     }
 
     fun undoMove() {
         gameEngine.undoMove()
-        updateBoard()
+        update()
     }
 
     fun push(offsetX: Float, offsetY: Float) {
@@ -40,11 +44,12 @@ class GameViewModel @Inject constructor(): ViewModel() {
             }
         }
 
-        gameEngine.addTileIfPushed()
-        updateBoard()
+        update()
     }
 
-    private fun updateBoard() {
-        board.value = gameEngine.board.copy()
+    private fun update() {
+        board = gameEngine.board.copy()
+        score = gameEngine.score
+        highScore = gameEngine.highScore
     }
 }

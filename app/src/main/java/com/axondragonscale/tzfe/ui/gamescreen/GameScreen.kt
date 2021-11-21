@@ -11,7 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
@@ -20,12 +19,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.axondragonscale.tzfe.data.Direction
-import com.axondragonscale.tzfe.data.Matrix
 import com.axondragonscale.tzfe.data.Tile
 import com.axondragonscale.tzfe.ui.theme.Colors
 import com.axondragonscale.tzfe.ui.theme.TZFETheme
-import kotlin.math.abs
 
 /**
  * Created by Ronak Harkhani on 05/06/21
@@ -89,9 +85,9 @@ fun HeaderView(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            ScoreView("SCORE", 432)
+            ScoreView("SCORE", viewModel.score)
             Spacer(modifier = Modifier.width(4.dp))
-            ScoreView("HIGH SCORE", 845)
+            ScoreView("HIGH SCORE", viewModel.highScore)
         }
 
         Row(
@@ -163,9 +159,6 @@ fun ScoreView(scoreText: String, scoreValue: Int) {
 fun BoardView(
     viewModel: GameViewModel = hiltViewModel()
 ) {
-
-    val board by remember { viewModel.board }
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -184,7 +177,7 @@ fun BoardView(
                                 .aspectRatio(1f)
                                 .padding(4.dp)
                         ) {
-                            TileView(board.base[i][j])
+                            TileView(viewModel.board.base[i][j])
                         }
                     }
                 }
