@@ -20,7 +20,7 @@ object Colors {
     val Tile32 = Color(211, 131, 105)
     val Tile64 = Color(214, 113, 85)
 
-    val TileColors = mapOf<Int, Color>(
+    val TileColors = mapOf(
         0 to TileEmpty,
         2 to Tile2,
         4 to Tile4,
@@ -33,7 +33,9 @@ object Colors {
         512 to Tile64,
         1024 to Tile64,
         2048 to Tile64,
-        4096 to Tile64
+        4096 to Tile64,
+        8192 to Tile64,
+        16384 to Tile64,
     )
 
     // Tile Fonts

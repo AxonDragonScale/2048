@@ -1,7 +1,9 @@
 package com.axondragonscale.tzfe.data
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.TextUnit
 import com.axondragonscale.tzfe.ui.theme.Colors
+import com.axondragonscale.tzfe.ui.theme.FontSizes
 import java.lang.RuntimeException
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -9,7 +11,7 @@ import kotlin.random.nextInt
 /**
  * Created by Ronak Harkhani on 05/06/21
  */
-class Tile private constructor(
+class Tile constructor(
     val value: Int,
     val id: Int = idCounter++
 ) {
@@ -18,7 +20,7 @@ class Tile private constructor(
 
         private var idCounter = 0
 
-        fun empty() = Tile(0, -1)
+        val EMPTY = Tile(0, -1)
 
         fun twoOrFour() = if (Random.nextInt(1..10) <= 9) Tile(2) else Tile(4)
 
@@ -41,6 +43,9 @@ class Tile private constructor(
 
     val fontColor: Color
         get() = if (value <= 8) Colors.dark else Colors.light
+
+    val fontSize: TextUnit
+        get() = FontSizes.TileFontSize[value] ?: FontSizes.SingleDigitTileFontSize
 
     val tileColor: Color
         get() = Colors.TileColors[value] ?: Colors.TileEmpty

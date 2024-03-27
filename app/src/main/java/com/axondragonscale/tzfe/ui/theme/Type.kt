@@ -26,3 +26,30 @@ val Typography = Typography(
     )
     */
 )
+
+object FontSizes {
+
+    val SingleDigitTileFontSize = 40.sp
+    val DoubleDigitTileFontSize = 36.sp
+    val TripleDigitTileFontSize = 32.sp
+    val QuadrupleDigitTileFontSize = 28.sp
+    val QuintupleDigitTileFontSize = 24.sp
+
+    val TileFontSize = mapOf(
+        0 to SingleDigitTileFontSize,
+        2 to SingleDigitTileFontSize,
+        4 to SingleDigitTileFontSize,
+        8 to SingleDigitTileFontSize,
+        16 to DoubleDigitTileFontSize,
+        32 to DoubleDigitTileFontSize,
+        64 to DoubleDigitTileFontSize,
+        128 to TripleDigitTileFontSize,
+        256 to TripleDigitTileFontSize,
+        512 to TripleDigitTileFontSize,
+        1024 to QuadrupleDigitTileFontSize,
+        2048 to QuadrupleDigitTileFontSize,
+        4096 to QuadrupleDigitTileFontSize,
+        8192 to QuadrupleDigitTileFontSize,
+        16384 to QuintupleDigitTileFontSize,
+    )
+}

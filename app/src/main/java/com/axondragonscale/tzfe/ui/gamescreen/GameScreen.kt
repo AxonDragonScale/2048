@@ -12,15 +12,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.axondragonscale.tzfe.data.Tile
-import com.axondragonscale.tzfe.ui.board.AnimatedGrid
 import com.axondragonscale.tzfe.ui.board.Board
 import com.axondragonscale.tzfe.ui.theme.Colors
 import com.axondragonscale.tzfe.ui.theme.TZFETheme
@@ -61,7 +58,7 @@ fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
             verticalArrangement = Arrangement.Center
         ) {
             HeaderView()
-            Board(viewModel.board.base)
+            Board(viewModel.board)
         }
     }
 }

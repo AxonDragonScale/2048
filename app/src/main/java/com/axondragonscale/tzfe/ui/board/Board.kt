@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.axondragonscale.tzfe.data.Matrix
 import com.axondragonscale.tzfe.data.Tile
 import com.axondragonscale.tzfe.ui.theme.Colors
 
@@ -23,7 +23,7 @@ import com.axondragonscale.tzfe.ui.theme.Colors
  */
 
 @Composable
-fun Board(tiles: List<List<Tile>>) {
+fun Board(matrix: Matrix) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -32,10 +32,10 @@ fun Board(tiles: List<List<Tile>>) {
             .aspectRatio(1f)
             .padding(4.dp)
     ) {
-        EmptyGrid(rows = tiles.size, cols = tiles.first().size) {
-            TileView(tile = Tile.empty(), force = true)
+        EmptyGrid(rows = matrix.rows, cols = matrix.cols) {
+            TileView(tile = Tile.EMPTY, shouldRenderEmptyTile = true)
         }
-        AnimatedGrid(items = tiles) {
+        AnimatedGrid(matrix = matrix) {
             TileView(tile = it)
         }
     }
@@ -43,8 +43,8 @@ fun Board(tiles: List<List<Tile>>) {
 
 
 @Composable
-fun TileView(tile: Tile, force: Boolean = false) {
-    if (!force && tile.isEmpty) return
+fun TileView(tile: Tile, shouldRenderEmptyTile: Boolean = false) {
+    if (!shouldRenderEmptyTile && tile.isEmpty) return
     Box(
         modifier = Modifier
             .padding(4.dp)
@@ -56,7 +56,7 @@ fun TileView(tile: Tile, force: Boolean = false) {
     ) {
         Text(
             text = tile.displayText,
-            fontSize = 40.sp,
+            fontSize = tile.fontSize,
             fontWeight = FontWeight.Bold,
             color = tile.fontColor
         )

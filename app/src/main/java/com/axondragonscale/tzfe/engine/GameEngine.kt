@@ -36,9 +36,8 @@ class GameEngine {
     }
 
     fun push(dir: Direction) {
-        println("Before $dir move")
-        board.print()
         initNewMove()
+        val tempBoard = board.copy()
         when (dir) {
             Direction.Left -> pushLeft()
             Direction.Right -> pushRight()
@@ -46,14 +45,11 @@ class GameEngine {
             Direction.Down -> pushDown()
         }
 
-        println("After $dir move")
-        board.print()
-
         updateScoreBy(moveScore)
-        if (anyMoved || anyCombined) addTile()
-
-        println("After new tile")
-        board.print()
+        if (anyMoved || anyCombined) {
+            addTile()
+            prevBoard = tempBoard
+        }
     }
 
     private fun updateScoreBy(points: Int) {
@@ -65,11 +61,11 @@ class GameEngine {
 
     private fun addTile() {
         val (row, col) = getEmptyPositions().random()
-        board.base[row][col] = Tile.twoOrFour()
+        board[row][col] = Tile.twoOrFour()
     }
 
     private fun getEmptyPositions(): List<Pair<Int, Int>> {
-        return board.base.flatMapIndexed { rowIndex, row ->
+        return board.flatMapIndexed { rowIndex, row ->
             row.mapIndexedNotNull { colIndex, tile ->
                 if (tile.isEmpty) Pair(rowIndex, colIndex) else null
             }
@@ -77,7 +73,6 @@ class GameEngine {
     }
 
     private fun initNewMove() {
-        prevBoard = board.copy()
         anyMoved = false
         anyCombined = false
         moveScore = 0
@@ -110,7 +105,7 @@ class GameEngine {
     }
 
     private fun slide() {
-        board.base.forEach { row ->
+        board.forEach { row ->
             val newRow = row.filter { !it.isEmpty } + row.filter { it.isEmpty }
             newRow.zip(row).forEach {
                 if (it.first.value != it.second.value) anyMoved = true
@@ -122,11 +117,11 @@ class GameEngine {
     }
 
     private fun combine() {
-        board.base.forEach { row ->
+        for (row in board) {
             for (col in 0 until row.size - 1) {
                 if (Tile.canCombine(row[col], row[col + 1])) {
                     row[col] = Tile.combine(row[col], row[col + 1])
-                    row[col + 1] = Tile.empty()
+                    row[col + 1] = Tile.EMPTY
                     moveScore += row[col].value
                     anyCombined = true
                 }
