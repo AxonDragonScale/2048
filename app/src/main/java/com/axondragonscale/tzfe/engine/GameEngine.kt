@@ -7,9 +7,15 @@ import com.axondragonscale.tzfe.data.Tile
  * Created by Ronak Harkhani on 05/06/21
  */
 class GameEngine {
-    val board = Matrix.emptyMatrix()
+    var board = Matrix.emptyMatrix()
+    var anyMoved = false
 
     init {
+        reset()
+    }
+
+    fun reset() {
+        board = Matrix.emptyMatrix()
         repeat(2) { addTile() }
     }
 
@@ -27,6 +33,7 @@ class GameEngine {
     }
 
     fun pushLeft() {
+        anyMoved = false
         slide()
         combine()
         slide()
@@ -52,16 +59,19 @@ class GameEngine {
         board.transpose()
     }
 
-    fun slide() {
+    private fun slide() {
         board.base.forEach { row ->
             val newRow = row.filter { !it.isEmpty } + row.filter { it.isEmpty }
+            newRow.zip(row).forEach {
+                if (it.first.value != it.second.value) anyMoved = true
+            }
             for (col in 0 until row.size) {
                 row[col] = newRow[col]
             }
         }
     }
 
-    fun combine() {
+    private fun combine() {
         board.base.forEach { row ->
             for (col in 0 until row.size - 1) {
                 if (Tile.canCombine(row[col], row[col + 1])) {
