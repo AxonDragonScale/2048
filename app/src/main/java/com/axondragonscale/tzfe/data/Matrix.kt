@@ -3,8 +3,8 @@ package com.axondragonscale.tzfe.data
 /**
  * Created by Ronak Harkhani on 05/06/21
  */
-class Matrix private constructor(
-    base: MutableList<MutableList<Tile>>
+class Matrix constructor(
+    val base: MutableList<MutableList<Tile>>
 ) : MutableList<MutableList<Tile>> by base {
 
     companion object {
@@ -51,13 +51,5 @@ class Matrix private constructor(
                 }
             }
         )
-    }
-
-    fun print() {
-        this.forEach { row ->
-            row.forEach { tile ->
-                print("${tile.value} ")
-            }
-        }
     }
 }

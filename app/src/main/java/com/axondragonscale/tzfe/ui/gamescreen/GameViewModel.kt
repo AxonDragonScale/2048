@@ -4,9 +4,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.axondragonscale.tzfe.data.Direction
+import com.axondragonscale.tzfe.data.Matrix
 import com.axondragonscale.tzfe.engine.GameEngine
+import com.axondragonscale.tzfe.repository.GameRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import kotlin.math.abs
 
@@ -14,12 +19,19 @@ import kotlin.math.abs
  * Created by Ronak Harkhani on 05/06/21
  */
 @HiltViewModel
-class GameViewModel @Inject constructor(): ViewModel() {
-    val gameEngine = GameEngine()
+class GameViewModel @Inject constructor(
+    private val gameEngine: GameEngine,
+    private val gameRepository: GameRepository
+): ViewModel() {
 
-    var board by mutableStateOf(gameEngine.board.copy())
-    var score by mutableStateOf(gameEngine.score)
-    var highScore by mutableStateOf(gameEngine.highScore)
+    init {
+        val savedGameState = runBlocking { gameRepository.getSavedGameState() }
+        gameEngine.init(savedGameState)
+    }
+
+    var board: Matrix by mutableStateOf(gameEngine.board.copy())
+    var score: Int by mutableStateOf(gameEngine.score)
+    var highScore: Int by mutableStateOf(gameEngine.highScore)
 
     fun resetBoard() {
         gameEngine.resetBoard()
@@ -51,5 +63,10 @@ class GameViewModel @Inject constructor(): ViewModel() {
         board = gameEngine.board.copy()
         score = gameEngine.score
         highScore = gameEngine.highScore
+        saveGameState()
+    }
+
+    private fun saveGameState() = viewModelScope.launch {
+        gameRepository.saveGameState(gameEngine.gameState)
     }
 }

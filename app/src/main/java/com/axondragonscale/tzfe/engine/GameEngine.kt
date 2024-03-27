@@ -1,36 +1,57 @@
 package com.axondragonscale.tzfe.engine
 
 import com.axondragonscale.tzfe.data.Direction
+import com.axondragonscale.tzfe.data.GameState
 import com.axondragonscale.tzfe.data.Matrix
 import com.axondragonscale.tzfe.data.Tile
+import javax.inject.Inject
 
 /**
  * Created by Ronak Harkhani on 05/06/21
  */
-class GameEngine {
-    private var prevBoard = Matrix.emptyMatrix()
-    var board = Matrix.emptyMatrix()
+class GameEngine @Inject constructor() {
 
-    var score = 0
-    var highScore = 0
+    lateinit var gameState: GameState
+
+    var score: Int
+        get() = gameState.score
+        private set(value) { gameState.score = value }
+
+    var highScore: Int
+        get() = gameState.highScore
+        private set(value) { gameState.highScore = value }
+
+    var board: Matrix
+        get() = gameState.board
+        private set(value) { gameState.board = value }
 
     private var moveScore = 0
     private var anyMoved = false
     private var anyCombined = false
 
-    init {
-        resetBoard()
+    fun init(savedGameState: GameState?) {
+        if (savedGameState != null) {
+            gameState = savedGameState
+        } else {
+            gameState = GameState(
+                board = Matrix.emptyMatrix(),
+                prevBoard = Matrix.emptyMatrix(),
+                score = 0,
+                highScore = 0
+            )
+            resetBoard()
+        }
     }
 
     fun resetBoard() {
         board = Matrix.emptyMatrix()
         repeat(2) { addTile() }
-        prevBoard = board.copy()
+        gameState.prevBoard = board.copy()
         score = 0
     }
 
     fun undoMove() {
-        board = prevBoard.copy()
+        board = gameState.prevBoard.copy()
         score -= moveScore
         moveScore = 0
     }
@@ -48,7 +69,7 @@ class GameEngine {
         updateScoreBy(moveScore)
         if (anyMoved || anyCombined) {
             addTile()
-            prevBoard = tempBoard
+            gameState.prevBoard = tempBoard
         }
     }
 
