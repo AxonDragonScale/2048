@@ -18,33 +18,29 @@ class GameViewModel @Inject constructor(): ViewModel() {
     var board = mutableStateOf(gameEngine.board.copy())
 
     fun resetBoard() {
-        gameEngine.reset()
+        gameEngine.resetBoard()
+        updateBoard()
+    }
+
+    fun undoMove() {
+        gameEngine.undoMove()
         updateBoard()
     }
 
     fun push(offsetX: Float, offsetY: Float) {
         if (abs(offsetX) > abs(offsetY)) {
             when {
-                offsetX > 0 -> pushInDirection(Direction.Right)
-                offsetX < 0 -> pushInDirection(Direction.Left)
+                offsetX > 0 -> gameEngine.push(Direction.Right)
+                offsetX < 0 -> gameEngine.push(Direction.Left)
             }
         } else {
             when {
-                offsetY > 0 -> pushInDirection(Direction.Down)
-                offsetY < 0 -> pushInDirection(Direction.Up)
+                offsetY > 0 -> gameEngine.push(Direction.Down)
+                offsetY < 0 -> gameEngine.push(Direction.Up)
             }
         }
-    }
 
-    private fun pushInDirection(dir: Direction) {
-        when (dir) {
-            Direction.Left -> gameEngine.pushLeft()
-            Direction.Right -> gameEngine.pushRight()
-            Direction.Up -> gameEngine.pushUp()
-            Direction.Down -> gameEngine.pushDown()
-        }
-
-        if (gameEngine.anyMoved) gameEngine.addTile()
+        gameEngine.addTileIfPushed()
         updateBoard()
     }
 

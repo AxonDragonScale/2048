@@ -1,5 +1,6 @@
 package com.axondragonscale.tzfe.engine
 
+import com.axondragonscale.tzfe.data.Direction
 import com.axondragonscale.tzfe.data.Matrix
 import com.axondragonscale.tzfe.data.Tile
 
@@ -7,19 +8,41 @@ import com.axondragonscale.tzfe.data.Tile
  * Created by Ronak Harkhani on 05/06/21
  */
 class GameEngine {
+    private var prevBoard = Matrix.emptyMatrix()
     var board = Matrix.emptyMatrix()
-    var anyMoved = false
+
+    private var anyMoved = false
+    private var anyCombined = false
 
     init {
-        reset()
+        resetBoard()
     }
 
-    fun reset() {
+    fun resetBoard() {
         board = Matrix.emptyMatrix()
         repeat(2) { addTile() }
+        prevBoard = board.copy()
     }
 
-    fun addTile() {
+    fun undoMove() {
+        board = prevBoard.copy()
+    }
+
+    fun push(dir: Direction) {
+        initNewMove()
+        when (dir) {
+            Direction.Left -> pushLeft()
+            Direction.Right -> pushRight()
+            Direction.Up -> pushUp()
+            Direction.Down -> pushDown()
+        }
+    }
+
+    fun addTileIfPushed() {
+        if (anyMoved || anyCombined) addTile()
+    }
+
+    private fun addTile() {
         val (row, col) = getEmptyPositions().random()
         board.base[row][col] = Tile.twoOrFour()
     }
@@ -32,26 +55,31 @@ class GameEngine {
         }
     }
 
-    fun pushLeft() {
+    private fun initNewMove() {
+        prevBoard = board.copy()
         anyMoved = false
+        anyCombined = false
+    }
+
+    private fun pushLeft() {
         slide()
         combine()
         slide()
     }
 
-    fun pushRight() {
+    private fun pushRight() {
         board.flipHorizontally()
         pushLeft()
         board.flipHorizontally()
     }
 
-    fun pushUp() {
+    private fun pushUp() {
         board.transpose()
         pushLeft()
         board.transpose()
     }
 
-    fun pushDown() {
+    private fun pushDown() {
         board.transpose()
         board.flipHorizontally()
         pushLeft()
