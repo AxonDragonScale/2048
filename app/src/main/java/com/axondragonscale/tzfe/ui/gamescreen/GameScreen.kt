@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.axondragonscale.tzfe.data.Direction
 import com.axondragonscale.tzfe.data.Matrix
 import com.axondragonscale.tzfe.ui.theme.Colors
@@ -48,7 +49,7 @@ fun GameScreen() {
 
 @Composable
 fun HeaderView(
-    viewModel: GameViewModel = hiltNavGraphViewModel()
+    viewModel: GameViewModel = hiltViewModel()
 ) {
     Column(
         modifier = Modifier.padding(4.dp)
@@ -130,7 +131,7 @@ fun ScoreView(scoreText: String, scoreValue: Int) {
 
 @Composable
 fun BoardView(
-    viewModel: GameViewModel = hiltNavGraphViewModel()
+    viewModel: GameViewModel = hiltViewModel()
 ) {
 
     val board by remember { viewModel.board }
