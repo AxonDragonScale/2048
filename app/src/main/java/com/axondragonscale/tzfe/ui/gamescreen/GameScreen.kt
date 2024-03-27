@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.axondragonscale.tzfe.data.Tile
+import com.axondragonscale.tzfe.ui.board.AnimatedGrid
+import com.axondragonscale.tzfe.ui.board.Board
 import com.axondragonscale.tzfe.ui.theme.Colors
 import com.axondragonscale.tzfe.ui.theme.TZFETheme
 
@@ -44,7 +46,7 @@ fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
                         offsetY = 0f
                     }
                 ) { change, dragAmount ->
-                    change.consumeAllChanges()
+                    change.consume()
 
                     offsetX += dragAmount.x
                     offsetY += dragAmount.y
@@ -59,7 +61,7 @@ fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
             verticalArrangement = Arrangement.Center
         ) {
             HeaderView()
-            BoardView()
+            Board(viewModel.board.base)
         }
     }
 }
@@ -151,57 +153,6 @@ fun ScoreView(scoreText: String, scoreValue: Int) {
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             color = Colors.light
-        )
-    }
-}
-
-@Composable
-fun BoardView(
-    viewModel: GameViewModel = hiltViewModel()
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .background(Colors.BoardBackground)
-            .aspectRatio(1f)
-            .padding(4.dp)
-    ) {
-        Column {
-            for (i in 0..3) {
-                Row {
-                    for (j in 0..3) {
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .aspectRatio(1f)
-                                .padding(4.dp)
-                        ) {
-                            TileView(viewModel.board.base[i][j])
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-
-@Composable
-fun TileView(tile: Tile) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .clip(RoundedCornerShape(4.dp))
-            .background(tile.tileColor)
-            .padding(8.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = tile.displayText,
-            fontSize = 40.sp,
-            fontWeight = FontWeight.Bold,
-            color = tile.fontColor
         )
     }
 }

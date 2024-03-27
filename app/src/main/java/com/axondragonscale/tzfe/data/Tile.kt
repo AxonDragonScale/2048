@@ -10,19 +10,17 @@ import kotlin.random.nextInt
  * Created by Ronak Harkhani on 05/06/21
  */
 class Tile private constructor(
-    val value: Int
+    val value: Int,
+    val id: Int = idCounter++
 ) {
 
     companion object {
-        val empty = Tile(0)
-        val two = Tile(2)
-        val four = Tile(4)
 
-        fun empty() = empty
-        fun two() = two
-        fun four() = four
+        private var idCounter = 0
 
-        fun twoOrFour() = if (Random.nextInt(1..10) <= 9) two else four
+        fun empty() = Tile(0, -1)
+
+        fun twoOrFour() = if (Random.nextInt(1..10) <= 9) Tile(2) else Tile(4)
 
         fun canCombine(a: Tile, b: Tile): Boolean {
             if (a.value == 0 || b.value == 0) return false
@@ -30,7 +28,7 @@ class Tile private constructor(
         }
 
         fun combine(a: Tile, b: Tile): Tile {
-            if (canCombine(a, b)) return Tile(a.value * 2)
+            if (canCombine(a, b)) return Tile(a.value * 2, b.id)
             else throw RuntimeException("Tiles ${a.value} and ${b.value} cannot be combined")
         }
     }
@@ -47,9 +45,4 @@ class Tile private constructor(
     val tileColor: Color
         get() = Colors.TileColors[value] ?: Colors.TileEmpty
 
-    operator fun plus(t: Tile): Tile {
-        return combine(this, t)
-    }
-
-    fun copy() = Tile(value)
 }

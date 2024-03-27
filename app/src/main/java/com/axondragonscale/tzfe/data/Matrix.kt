@@ -5,6 +5,8 @@ package com.axondragonscale.tzfe.data
  */
 class Matrix private constructor(val base: MutableList<MutableList<Tile>>) {
 
+    // TODO: Matrix should not have a list of list, it should be a list of list
+
     companion object {
         var size = 4
         private val rows = 0 until size
@@ -50,8 +52,6 @@ class Matrix private constructor(val base: MutableList<MutableList<Tile>>) {
             row.forEach { tile ->
                 print("${tile.value} ")
             }
-            println()
         }
-        println()
     }
 }

@@ -36,6 +36,8 @@ class GameEngine {
     }
 
     fun push(dir: Direction) {
+        println("Before $dir move")
+        board.print()
         initNewMove()
         when (dir) {
             Direction.Left -> pushLeft()
@@ -44,8 +46,14 @@ class GameEngine {
             Direction.Down -> pushDown()
         }
 
+        println("After $dir move")
+        board.print()
+
         updateScoreBy(moveScore)
         if (anyMoved || anyCombined) addTile()
+
+        println("After new tile")
+        board.print()
     }
 
     private fun updateScoreBy(points: Int) {
@@ -118,8 +126,9 @@ class GameEngine {
             for (col in 0 until row.size - 1) {
                 if (Tile.canCombine(row[col], row[col + 1])) {
                     row[col] = Tile.combine(row[col], row[col + 1])
-                    row[col + 1] = Tile.empty
+                    row[col + 1] = Tile.empty()
                     moveScore += row[col].value
+                    anyCombined = true
                 }
             }
         }
