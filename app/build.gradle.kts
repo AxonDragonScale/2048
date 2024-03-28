@@ -1,23 +1,22 @@
 
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
-    id("kotlin-kapt")
-    id("dagger.hilt.android.plugin")
-    id("com.google.devtools.ksp") version "1.7.10-1.0.6"
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
 
-    compileSdk = 33
+    namespace = libs.versions.applicationId.get()
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        namespace = "com.axondragonscale.tzfe"
-        applicationId = "com.axondragonscale.tzfe"
-        minSdk = 26
-        targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
+        applicationId = libs.versions.applicationId.get()
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
+        versionCode = libs.versions.versionCode.get().toInt()
+        versionName = libs.versions.versionName.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -27,54 +26,55 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("debug")
+            isDebuggable = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = "17"
     }
+
     buildFeatures {
         compose = true
     }
+
     composeOptions {
-        kotlinCompilerExtensionVersion = rootProject.extra["compose_version"] as String
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 }
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.appcompat:appcompat:1.5.1")
-    implementation("com.google.android.material:material:1.7.0")
-    implementation("androidx.compose.ui:ui:${rootProject.extra["compose_version"]}")
-    implementation("androidx.compose.material:material:${rootProject.extra["compose_version"]}")
-    implementation("androidx.compose.ui:ui-tooling:${rootProject.extra["compose_version"]}")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
-    implementation("androidx.activity:activity-compose:1.6.1")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.compose)
+
+    implementation(libs.bundles.lifecycle)
+
+    implementation(platform(libs.compose.bom))
+    implementation(libs.bundles.compose)
+    debugImplementation(libs.bundles.composeDebug)
 
     // Data Store
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation(libs.datastore.prefs)
 
     // Moshi
-    implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
-    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.14.0")
+    implementation(libs.moshi.kotlin)
+    ksp(libs.moshi.codegen)
 
-    // Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:2.44.2")
-    kapt("com.google.dagger:hilt-android-compiler:2.44.2")
-    kapt("androidx.hilt:hilt-compiler:1.0.0")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    // Hilt
+    implementation(libs.bundles.hilt)
+    ksp(libs.bundles.hiltKsp)
 
-    testImplementation("junit:junit:4.+")
-    androidTestImplementation("androidx.test.ext:junit:1.1.4")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:${rootProject.extra["compose_version"]}")
+    testImplementation(libs.junit)
 }

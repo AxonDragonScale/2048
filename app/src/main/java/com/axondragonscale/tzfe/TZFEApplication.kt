@@ -7,5 +7,4 @@ import dagger.hilt.android.HiltAndroidApp
  * Created by Ronak Harkhani on 05/06/21
  */
 @HiltAndroidApp
-class TZFEApplication: Application() {
-}
+class TZFEApplication: Application()
