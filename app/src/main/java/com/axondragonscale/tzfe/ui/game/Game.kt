@@ -1,4 +1,4 @@
-package com.axondragonscale.tzfe.ui.gamescreen
+package com.axondragonscale.tzfe.ui.game
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,6 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.axondragonscale.tzfe.data.Matrix
 import com.axondragonscale.tzfe.ui.board.Board
 import com.axondragonscale.tzfe.ui.theme.Colors
 import com.axondragonscale.tzfe.ui.theme.TZFETheme
@@ -27,7 +29,19 @@ import com.axondragonscale.tzfe.ui.theme.TZFETheme
  */
 
 @Composable
-fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
+fun Game(vm: GameVM = hiltViewModel()) {
+    val uiState by vm.uiState.collectAsStateWithLifecycle()
+    Game(
+        uiState = uiState,
+        onEvent = { vm.onEvent(it) }
+    )
+}
+
+@Composable
+fun Game(
+    uiState: GameUiState,
+    onEvent: (GameUiEvent) -> Unit,
+) {
     var offsetX by remember { mutableStateOf(0f) }
     var offsetY by remember { mutableStateOf(0f) }
 
@@ -37,17 +51,18 @@ fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
             .fillMaxSize()
             .pointerInput(Unit) {
                 detectDragGestures(
+                    onDrag = { change, dragAmount ->
+                        change.consume()
+
+                        offsetX += dragAmount.x
+                        offsetY += dragAmount.y
+                    },
                     onDragEnd = {
-                        viewModel.push(offsetX, offsetY)
+                        onEvent(GameUiEvent.Push(offsetX, offsetY))
                         offsetX = 0f
                         offsetY = 0f
                     }
-                ) { change, dragAmount ->
-                    change.consume()
-
-                    offsetX += dragAmount.x
-                    offsetY += dragAmount.y
-                }
+                )
             }
     ) {
         Column(
@@ -57,15 +72,25 @@ fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            HeaderView()
-            Board(viewModel.board)
+
+            HeaderView(
+                score = uiState.score,
+                highScore = uiState.highScore,
+                onUndoClick = { onEvent(GameUiEvent.Undo) },
+                onResetClick = { onEvent(GameUiEvent.Reset) },
+            )
+
+            Board(matrix = uiState.board)
         }
     }
 }
 
 @Composable
 fun HeaderView(
-    viewModel: GameViewModel = hiltViewModel()
+    score: Int,
+    highScore: Int,
+    onUndoClick: () -> Unit,
+    onResetClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier.padding(4.dp)
@@ -84,9 +109,9 @@ fun HeaderView(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            ScoreView("SCORE", viewModel.score)
+            ScoreView("SCORE", score)
             Spacer(modifier = Modifier.width(4.dp))
-            ScoreView("HIGH SCORE", viewModel.highScore)
+            ScoreView("HIGH SCORE", highScore)
         }
 
         Row(
@@ -101,9 +126,9 @@ fun HeaderView(
             )
 
             Row {
-                ButtonView(btnText = "UNDO") { viewModel.undoMove() }
+                ButtonView(btnText = "UNDO") { onUndoClick() }
                 Spacer(modifier = Modifier.width(4.dp))
-                ButtonView(btnText = "RESET") { viewModel.resetBoard() }
+                ButtonView(btnText = "RESET") { onResetClick() }
             }
         }
 
@@ -158,6 +183,13 @@ fun ScoreView(scoreText: String, scoreValue: Int) {
 @Composable
 fun DefaultPreview() {
     TZFETheme {
-        GameScreen()
+        Game(
+            uiState = GameUiState(
+                score = 120,
+                highScore = 3245,
+                board = Matrix.emptyMatrix()
+            ),
+            onEvent = {}
+        )
     }
 }

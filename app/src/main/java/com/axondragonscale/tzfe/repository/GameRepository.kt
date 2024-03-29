@@ -8,11 +8,11 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.axondragonscale.tzfe.data.GameState
 import com.axondragonscale.tzfe.moshi.MoshiProvider
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
@@ -26,14 +26,14 @@ class GameRepository @Inject constructor(
 
     private val gameStateKey = stringPreferencesKey("gameState")
 
-    suspend fun getSavedGameState(): GameState? {
+    suspend fun getSavedGameState(): GameState? = withContext(Dispatchers.IO) {
         val gameStateFlow = context.dataStore.data.map {  preferences ->
             preferences[gameStateKey]?.let { MoshiProvider.gameStateAdapter.fromJson(it) }
         }
-        return gameStateFlow.firstOrNull()
+        gameStateFlow.firstOrNull()
     }
 
-    suspend fun saveGameState(gameState: GameState) {
+    suspend fun saveGameState(gameState: GameState) = withContext(Dispatchers.IO) {
         context.dataStore.edit { preferences ->
             preferences[gameStateKey] = MoshiProvider.gameStateAdapter.toJson(gameState)
         }

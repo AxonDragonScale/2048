@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.axondragonscale.tzfe.ui.gamescreen.GameScreen
+import com.axondragonscale.tzfe.ui.game.Game
 import com.axondragonscale.tzfe.ui.theme.TZFETheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -16,7 +16,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TZFETheme {
-                GameScreen()
+                Game()
             }
         }
     }
@@ -27,6 +27,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DefaultPreview() {
     TZFETheme {
-        GameScreen()
+        Game()
     }
 }

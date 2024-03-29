@@ -77,12 +77,10 @@ fun AnimatedGrid(
             itemContent(tile)
         }
 
-        LaunchedEffect(tile.id) {
+        LaunchedEffect(tile.id, rowIndex, colIndex) {
             val newOffset = gridOffsets[rowIndex][colIndex]
-            launch {
-                oldOffset.animateTo(newOffset, tween(200))
-                oldScale.animateTo(1f, tween(200, 50))
-            }
+            oldOffset.animateTo(newOffset, tween(200))
+            oldScale.animateTo(1f, tween(200, 50))
         }
     }
 }

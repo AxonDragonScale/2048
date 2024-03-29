@@ -1,8 +1,5 @@
-package com.axondragonscale.tzfe.ui.gamescreen
+package com.axondragonscale.tzfe.ui.game
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.axondragonscale.tzfe.data.Direction
@@ -10,8 +7,9 @@ import com.axondragonscale.tzfe.data.Matrix
 import com.axondragonscale.tzfe.engine.GameEngine
 import com.axondragonscale.tzfe.repository.GameRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import kotlin.math.abs
 
@@ -19,31 +17,32 @@ import kotlin.math.abs
  * Created by Ronak Harkhani on 05/06/21
  */
 @HiltViewModel
-class GameViewModel @Inject constructor(
+class GameVM @Inject constructor(
     private val gameEngine: GameEngine,
     private val gameRepository: GameRepository
 ): ViewModel() {
 
+    val uiState = MutableStateFlow(GameUiState(0, 0 , Matrix.emptyMatrix()))
+
     init {
-        val savedGameState = runBlocking { gameRepository.getSavedGameState() }
-        gameEngine.init(savedGameState)
+        viewModelScope.launch {
+            val savedGameState = gameRepository.getSavedGameState()
+            gameEngine.init(savedGameState)
+            updateUiState()
+        }
     }
 
-    var board: Matrix by mutableStateOf(gameEngine.board.copy())
-    var score: Int by mutableStateOf(gameEngine.score)
-    var highScore: Int by mutableStateOf(gameEngine.highScore)
-
-    fun resetBoard() {
-        gameEngine.resetBoard()
-        update()
+    fun onEvent(event: GameUiEvent) {
+        when (event) {
+            is GameUiEvent.Push -> push(event.offsetX, event.offsetY)
+            GameUiEvent.Reset -> gameEngine.resetBoard()
+            GameUiEvent.Undo -> gameEngine.undoMove()
+        }
+        updateUiState()
+        saveGameState()
     }
 
-    fun undoMove() {
-        gameEngine.undoMove()
-        update()
-    }
-
-    fun push(offsetX: Float, offsetY: Float) {
+    private fun push(offsetX: Float, offsetY: Float) {
         if (abs(offsetX) > abs(offsetY)) {
             when {
                 offsetX > 0 -> gameEngine.push(Direction.Right)
@@ -55,15 +54,16 @@ class GameViewModel @Inject constructor(
                 offsetY < 0 -> gameEngine.push(Direction.Up)
             }
         }
-
-        update()
     }
 
-    private fun update() {
-        board = gameEngine.board.copy()
-        score = gameEngine.score
-        highScore = gameEngine.highScore
-        saveGameState()
+    private fun updateUiState() {
+        uiState.update {
+            GameUiState(
+                score = gameEngine.score,
+                highScore = gameEngine.highScore,
+                board = gameEngine.board.copy(),
+            )
+        }
     }
 
     private fun saveGameState() = viewModelScope.launch {
