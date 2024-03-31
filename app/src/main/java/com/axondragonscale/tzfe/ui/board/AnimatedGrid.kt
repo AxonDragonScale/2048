@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
 import com.axondragonscale.tzfe.data.Matrix
 import com.axondragonscale.tzfe.data.Tile
-import kotlinx.coroutines.launch
 
 /**
  * Created by Ronak Harkhani on 11/03/23
@@ -68,6 +67,12 @@ fun AnimatedGrid(
         val oldOffset = oldOffsets.getValue(tile.id)
         val oldScale = oldScales.getValue(tile.id)
 
+        LaunchedEffect(tile.id, rowIndex, colIndex) {
+            val newOffset = gridOffsets[rowIndex][colIndex]
+            oldOffset.animateTo(newOffset, tween(200))
+            oldScale.animateTo(1f, tween(200, 50))
+        }
+
         Box(
             Modifier
                 .size(itemSize)
@@ -75,12 +80,6 @@ fun AnimatedGrid(
                 .scale(oldScale.value)
         ) {
             itemContent(tile)
-        }
-
-        LaunchedEffect(tile.id, rowIndex, colIndex) {
-            val newOffset = gridOffsets[rowIndex][colIndex]
-            oldOffset.animateTo(newOffset, tween(200))
-            oldScale.animateTo(1f, tween(200, 50))
         }
     }
 }
