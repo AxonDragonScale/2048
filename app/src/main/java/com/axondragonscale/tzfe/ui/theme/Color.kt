@@ -8,12 +8,17 @@ object Colors {
 
     // Tile Colors
     val TileEmpty = Color(197, 186, 175)
-    val Tile2 = Color(235, 228, 220)
-    val Tile4 = Color(233, 179, 204)
-    val Tile8 = Color(225, 179, 135)
-    val Tile16 = Color(215, 151, 112)
-    val Tile32 = Color(211, 131, 105)
-    val Tile64 = Color(214, 113, 85)
+    val Tile2 = Color(0xffeee4da)
+    val Tile4 = Color(0xffede0c8)
+    val Tile8 = Color(0xfff2b179)
+    val Tile16 = Color(0xfff59563)
+    val Tile32 = Color(0xfff67c5f)
+    val Tile64 = Color(0xfff65e3b)
+    val Tile128 = Color(0xffedcf72)
+    val Tile256 = Color(0xffedcc61)
+    val Tile512 = Color(0xffedc850)
+    val Tile1024 = Color(0xffedc53f)
+    val Tile2048 = Color(0xffedc22e)
 
     val TileColors = mapOf(
         0 to TileEmpty,
@@ -23,11 +28,11 @@ object Colors {
         16 to Tile16,
         32 to Tile32,
         64 to Tile64,
-        128 to Tile64,
-        256 to Tile64,
-        512 to Tile64,
-        1024 to Tile64,
-        2048 to Tile64,
+        128 to Tile128,
+        256 to Tile256,
+        512 to Tile512,
+        1024 to Tile1024,
+        2048 to Tile2048,
         4096 to Tile64,
         8192 to Tile64,
         16384 to Tile64,

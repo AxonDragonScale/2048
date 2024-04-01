@@ -31,14 +31,11 @@ fun AnimatedGrid(
     matrix: Matrix,
     itemContent: @Composable BoxScope.(Tile) -> Unit
 ) = BoxWithConstraints(modifier) {
-    val rows = remember { matrix.rows }
-    val cols = remember { matrix.cols }
-
-    val itemSize = remember(rows, cols) {
-        DpSize(maxWidth / cols, maxHeight / rows)
+    val itemSize = remember(matrix.rows, matrix.cols) {
+        DpSize(maxWidth / matrix.cols, maxHeight / matrix.rows)
     }
 
-    val gridOffsets = remember(rows, cols, itemSize) {
+    val gridOffsets = remember(matrix.rows, matrix.cols, itemSize) {
         matrix.mapIndexed { rowIndex, row ->
             row.mapIndexed { colIndex, _ ->
                 DpOffset(itemSize.width * colIndex, itemSize.height * rowIndex)
@@ -46,22 +43,17 @@ fun AnimatedGrid(
         }
     }
 
-    var oldOffsets by remember { mutableStateOf(mapOf<Int, ItemOffsetAnimatable>()) }
-    var oldScales by remember { mutableStateOf(mapOf<Int, ScaleAnimatable>()) }
-
-    val tempOffsets = mutableMapOf<Int, ItemOffsetAnimatable>()
-    val tempScales = mutableMapOf<Int, ScaleAnimatable>()
+    val oldOffsets = remember { mutableMapOf<Int, ItemOffsetAnimatable>() }
+    val oldScales = remember { mutableMapOf<Int, ScaleAnimatable>() }
     matrix.iterateIndexed { rowIndex, colIndex, tile ->
         key(tile.id) {
-            tempOffsets[tile.id] = oldOffsets[tile.id]
+            oldOffsets[tile.id] = oldOffsets[tile.id]
                 ?: ItemOffsetAnimatable(gridOffsets[rowIndex][colIndex], DpOffset.VectorConverter)
 
-            tempScales[tile.id] = oldScales[tile.id]
+            oldScales[tile.id] = oldScales[tile.id]
                 ?: ScaleAnimatable(0f, Float.VectorConverter)
         }
     }
-    oldOffsets = tempOffsets
-    oldScales = tempScales
 
     matrix.iterateIndexed { rowIndex, colIndex, tile ->
         val oldOffset = oldOffsets.getValue(tile.id)

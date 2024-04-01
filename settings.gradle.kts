@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "TZFE"
+rootProject.name = "2048"
 
 include(":app")
